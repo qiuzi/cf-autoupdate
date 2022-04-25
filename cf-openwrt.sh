@@ -18,10 +18,10 @@ localport=8443
 remoteport=443
 declare -i bandwidth
 declare -i speed
-pushplus=自己的token
-ServerChanTurbo=自己的token
-Telegrambot=自己的token
-bandwidth=0
+pushplus=
+ServerChanTurbo=
+Telegrambot=
+bandwidth=1
 tasknum=25
 if [ -z "$tasknum" ]
 then
@@ -47,8 +47,8 @@ start_seconds=$(date --date="$starttime" +%s)
 end_seconds=$(date --date="$endtime" +%s)
 clear
 curl --$ips --resolve service.baipiao.eu.org:443:$anycast --retry 3 -s -X POST https://service.baipiao.eu.org -o temp.txt
-publicip=$(grep publicip= temp.txt | cut -f 2- -d'=')
-colo=$(grep colo= temp.txt | cut -f 2- -d'=')
+#publicip=$(grep publicip= temp.txt | cut -f 2- -d'=')
+#colo=$(grep colo= temp.txt | cut -f 2- -d'=')
 rm -rf temp.txt
 echo $anycast>$ips.txt
 echo 优选IP $anycast
@@ -63,15 +63,15 @@ echo 峰值速度 $max kB/s
 echo 往返延迟 $avgms 毫秒
 echo 数据中心 $colo
 echo 总计用时 $((end_seconds-start_seconds)) 秒
-		iptables -t nat -D OUTPUT $(iptables -t nat -nL OUTPUT --line-number | grep $localport | awk '{print $1}')
-		iptables -t nat -A OUTPUT -p tcp --dport $localport -j DNAT --to-destination $anycast:$remoteport
+#		iptables -t nat -D OUTPUT $(iptables -t nat -nL OUTPUT --line-number | grep $localport | awk '{print $1}')
+#		iptables -t nat -A OUTPUT -p tcp --dport $localport -j DNAT --to-destination $anycast:$remoteport
 		#echo $(date +'%Y-%m-%d %H:%M:%S') IP指向 $anycast>>/usr/dns/cfnat.txt
 
-		curl -s -o /dev/null --data "token=$pushplus&title=$anycast更新成功！&content= 优选IP $anycast<br>公网IP $publicip<br/>自治域 AS$asn<br>运营商 $isp<br>经纬度 $longitude,$latitude<br>位置信息 $city,$region,$country<br>实测带宽 $realbandwidth Mbps<br>峰值速度 $max kB/s<br>往返延迟 $avgms 毫秒<br>数据中心 $colo<br>总计用时 $((end_seconds-start_seconds)) 秒<br>&template=html" http://www.pushplus.plus/send #微信推送最新查找的IP-pushplus推送加
+#		curl -s -o /dev/null --data "token=$pushplus&title=$anycast更新成功！&content= 优选IP $anycast<br>公网IP $publicip<br/>自治域 AS$asn<br>运营商 $isp<br>经纬度 $longitude,$latitude<br>位置信息 $city,$region,$country<br>实测带宽 $realbandwidth Mbps<br>峰值速度 $max kB/s<br>往返延迟 $avgms 毫秒<br>数据中心 $colo<br>总计用时 $((end_seconds-start_seconds)) 秒<br>&template=html" http://www.pushplus.plus/send #微信推送最新查找的IP-pushplus推送加
 
 #		curl -s -o /dev/null --data "title=$anycast更新成功！&desp=$(date +'%Y-%m-%d %H:%M:%S') %0D%0A%0D%0A---%0D%0A%0D%0A * 优选IP $anycast 满足 $bandwidth Mbps带宽需求 %0D%0A * 公网IP $publicip %0D%0A * 自治域 AS$asn %0D%0A * 运营商 $isp %0D%0A * 经纬度 $longitude,$latitude %0D%0A * 位置信息 $city,$region,$country %0D%0A * 实测带宽 $realbandwidth Mbps %0D%0A * 峰值速度 $max kB/s %0D%0A·往返延迟 $avgms 毫秒 %0D%0A * 数据中心 $colo %0D%0A * 总计用时 $((end_seconds-start_seconds)) 秒"  https://sctapi.ftqq.com/$ServerChanTurbo.send #微信推送最新查找的IP-Server酱·Turbo版
 
-		curl -s -o /dev/null --data "&text=*$anycast更新成功！* %0D%0A$(date +'%Y\-%m\-%d %H:%M:%S')%0D%0A----------------------------------%0D%0A·优选IP $anycast 满足 $bandwidth Mbps带宽需求 %0D%0A·公网IP $publicip %0D%0A·自治域 AS$asn %0D%0A·运营商 $isp %0D%0A·经纬度 $longitude,$latitude %0D%0A·位置信息 $city,$region,$country %0D%0A·实测带宽 $realbandwidth Mbps %0D%0A·峰值速度 $max kB/s %0D%0A·往返延迟 $avgms 毫秒 %0D%0A·数据中心 $colo %0D%0A----------------------------------&parse_mode=Markdown" https://pb.pupilcc.app/sendMessage/$Telegrambot #Telegram推送最新查找的IP- @notification_me_bot
+#		curl -s -o /dev/null --data "&text=*$anycast更新成功！* %0D%0A$(date +'%Y\-%m\-%d %H:%M:%S')%0D%0A----------------------------------%0D%0A·优选IP $anycast 满足 $bandwidth Mbps带宽需求 %0D%0A·公网IP $publicip %0D%0A·自治域 AS$asn %0D%0A·运营商 $isp %0D%0A·经纬度 $longitude,$latitude %0D%0A·位置信息 $city,$region,$country %0D%0A·实测带宽 $realbandwidth Mbps %0D%0A·峰值速度 $max kB/s %0D%0A·往返延迟 $avgms 毫秒 %0D%0A·数据中心 $colo %0D%0A----------------------------------&parse_mode=Markdown" https://pb.pupilcc.app/sendMessage/$Telegrambot #Telegram推送最新查找的IP- @notification_me_bot
 
 }
 
