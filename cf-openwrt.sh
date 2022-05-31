@@ -14,14 +14,13 @@
 version=20220525
 
 function bettercloudflareip (){
-#localport=8443
 remoteport=443
 declare -i bandwidth
 declare -i speed
 pushplus=
 ServerChanTurbo=
 Telegrambot=
-bandwidth=1
+bandwidth=10
 tasknum=25
 if [ -z "$tasknum" ]
 then
@@ -47,32 +46,8 @@ start_seconds=$(date --date="$starttime" +%s)
 end_seconds=$(date --date="$endtime" +%s)
 clear
 curl --$ips --resolve service.baipiaocf.ml:443:$anycast --retry 3 -s -X POST https://service.baipiaocf.ml -o temp.txt
-#publicip=$(grep publicip= temp.txt | cut -f 2- -d'=')
-#colo=$(grep colo= temp.txt | cut -f 2- -d'=')
 rm -rf temp.txt
 echo address=/.1008601.eu.org/$anycast>/tmp/dnsmasq.d/$ips.conf
-#echo 优选IP $anycast
-#echo 公网IP $publicip
-#echo 自治域 AS$asn
-#echo 运营商 $isp
-#echo 经纬度 $longitude,$latitude
-#echo 位置信息 $city,$region,$country
-#echo 设置带宽 $bandwidth Mbps
-#echo 实测带宽 $realbandwidth Mbps
-#echo 峰值速度 $max kB/s
-#echo 往返延迟 $avgms 毫秒
-#echo 数据中心 $colo
-#echo 总计用时 $((end_seconds-start_seconds)) 秒
-#		iptables -t nat -D OUTPUT $(iptables -t nat -nL OUTPUT --line-number | grep $localport | awk '{print $1}')
-#		iptables -t nat -A OUTPUT -p tcp --dport $localport -j DNAT --to-destination $anycast:$remoteport
-		#echo $(date +'%Y-%m-%d %H:%M:%S') IP指向 $anycast>>/usr/dns/cfnat.txt
-
-#		curl -s -o /dev/null --data "token=$pushplus&title=$anycast更新成功！&content= 优选IP $anycast<br>公网IP $publicip<br/>自治域 AS$asn<br>运营商 $isp<br>经纬度 $longitude,$latitude<br>位置信息 $city,$region,$country<br>实测带宽 $realbandwidth Mbps<br>峰值速度 $max kB/s<br>往返延迟 $avgms 毫秒<br>数据中心 $colo<br>总计用时 $((end_seconds-start_seconds)) 秒<br>&template=html" http://www.pushplus.plus/send #微信推送最新查找的IP-pushplus推送加
-
-#		curl -s -o /dev/null --data "title=$anycast更新成功！&desp=$(date +'%Y-%m-%d %H:%M:%S') %0D%0A%0D%0A---%0D%0A%0D%0A * 优选IP $anycast 满足 $bandwidth Mbps带宽需求 %0D%0A * 公网IP $publicip %0D%0A * 自治域 AS$asn %0D%0A * 运营商 $isp %0D%0A * 经纬度 $longitude,$latitude %0D%0A * 位置信息 $city,$region,$country %0D%0A * 实测带宽 $realbandwidth Mbps %0D%0A * 峰值速度 $max kB/s %0D%0A·往返延迟 $avgms 毫秒 %0D%0A * 数据中心 $colo %0D%0A * 总计用时 $((end_seconds-start_seconds)) 秒"  https://sctapi.ftqq.com/$ServerChanTurbo.send #微信推送最新查找的IP-Server酱·Turbo版
-
-#		curl -s -o /dev/null --data "&text=*$anycast更新成功！* %0D%0A$(date +'%Y\-%m\-%d %H:%M:%S')%0D%0A----------------------------------%0D%0A·优选IP $anycast 满足 $bandwidth Mbps带宽需求 %0D%0A·公网IP $publicip %0D%0A·自治域 AS$asn %0D%0A·运营商 $isp %0D%0A·经纬度 $longitude,$latitude %0D%0A·位置信息 $city,$region,$country %0D%0A·实测带宽 $realbandwidth Mbps %0D%0A·峰值速度 $max kB/s %0D%0A·往返延迟 $avgms 毫秒 %0D%0A·数据中心 $colo %0D%0A----------------------------------&parse_mode=Markdown" https://pb.pupilcc.app/sendMessage/$Telegrambot #Telegram推送最新查找的IP- @notification_me_bot
-
 }
 
 function rtt (){
@@ -188,7 +163,6 @@ do
 				done
 			else
 				echo 指向解析获取CF $ips 节点
-				echo 如果长时间无法获取CF $ips 节点,重新运行程序并选择清空缓存
 				resolveip=$(cat $ips.txt)
 				while true
 				do
@@ -354,54 +328,17 @@ curl --resolve $domain:443:$testip https://$domain/$file -o /dev/null --connect-
 while true
 do
 	clear
-	#echo 1. IPV4优选
-	#echo 2. IPV6优选
-	#echo 3. 自定义IPV4段
-	#echo 4. 单IP测速
-	#echo 5. 清空缓存
 	HTTP_CODE=$(curl -o /dev/null --ipv6 --connect-timeout 3 -s -w "%{http_code}" https://service.baipiaocf.ml/meta)
-	#read -p "请选择菜单: " menu
-	menu=1
-	if [ $menu == 0 ]
-	then
-		clear
-		echo 退出成功
-		break
-	fi
-	if [ $menu == 1 ]
-	then
 		rm -rf ipv4.txt ipv6.txt rtt data.txt meta.txt log.txt anycast.txt temp.txt speed.txt
 		ips=ipv4
 		selfmode=0
 		bettercloudflareip
-		break
-#	fi
 	if [ $HTTP_CODE -eq 200 ]
 	then
 		ips=ipv6
 		selfmode=0
 		bettercloudflareip
+	fi
+		/etc/init.d/dnsmasq restart
 		break
-	fi
-	fi
-	if [ $menu == 3 ]
-	then
-		ips=ipv4
-		selfmode=1
-		read -p "请输入C类自定义IPV4(格式 104.16.16):" selfip
-		bettercloudflareip
-		break
-	fi
-	if [ $menu == 4 ]
-	then
-		singletest
-		clear
-		echo 测速完毕
-	fi
-	if [ $menu == 5 ]
-	then
-		rm -rf ipv4.txt ipv6.txt rtt data.txt meta.txt log.txt anycast.txt temp.txt speed.txt
-		clear
-		echo 缓存已经清空
-	fi
 done
