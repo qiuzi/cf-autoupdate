@@ -22,20 +22,7 @@ ServerChanTurbo=
 Telegrambot=
 bandwidth=10
 tasknum=25
-if [ -z "$tasknum" ]
-then
-	tasknum=25
-fi
-if [ $tasknum -eq 0 ]
-then
-	echo 进程数不能为0,自动设置为默认值
-	tasknum=25
-fi
-if [ $tasknum -gt 50 ]
-then
-	echo 超过最大进程限制,自动设置为最大值
-	tasknum=50
-fi
+
 speed=bandwidth*128*1024
 starttime=$(date +'%Y-%m-%d %H:%M:%S')
 cloudflaretest
@@ -143,7 +130,6 @@ do
 			if [ ! -f "$ips.txt" ]
 			then
 				echo DNS解析获取CF $ips 节点
-				echo 如果域名被污染,请手动创建 $ips.txt 做解析
 				while true
 				do
 					if [ ! -f "meta.txt" ]
