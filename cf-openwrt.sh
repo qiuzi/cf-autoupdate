@@ -11,7 +11,7 @@
 #	路由上的爬墙软件节点IP全部换成路由IP，如192.168.1.1:8443，端口全部8443
 #	使用前请更换自己的推送token 注册地址下下方
 # --------------------------------------------------------------
-version=20220525
+#version=20220525
 
 function bettercloudflareip (){
 remoteport=443
@@ -21,7 +21,7 @@ pushplus=
 ServerChanTurbo=
 Telegrambot=
 bandwidth=10
-tasknum=25
+tasknum=10
 
 speed=bandwidth*128*1024
 starttime=$(date +'%Y-%m-%d %H:%M:%S')
@@ -176,14 +176,14 @@ do
 		domain=$(grep domain= data.txt | cut -f 2- -d'=')
 		file=$(grep file= data.txt | cut -f 2- -d'=')
 		url=$(grep url= data.txt | cut -f 2- -d'=')
-		app=$(grep app= data.txt | cut -f 2- -d'=')
-		if [ "$app" != "$version" ]
-		then
-			echo 发现新版本程序: $app
-			echo 更新地址: $url
-			echo 更新后才可以使用
-			exit
-		fi
+#		app=$(grep app= data.txt | cut -f 2- -d'=')
+#		if [ "$app" != "$version" ]
+#		then
+#			echo 发现新版本程序: $app
+#			echo 更新地址: $url
+#			echo 更新后才可以使用
+#			exit
+#		fi
 		if [ $selfmode == 1 ]
 		then
 			rm -rf data.txt
